@@ -44,6 +44,7 @@
         <android.support.design.widget.TextInputEditText
             android:id="@+id/register_name_field"
             android:layout_width="match_parent"
+            android:inputType="textPersonName"
             android:layout_height="wrap_content"
             android:hint="Name..." />
     </android.support.design.widget.TextInputLayout>
@@ -63,6 +64,7 @@
             android:id="@+id/register_email_field"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:inputType="textEmailAddress"
             android:hint="Email..." />
     </android.support.design.widget.TextInputLayout>
 
@@ -81,6 +83,7 @@
             android:id="@+id/register_password_field"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:inputType="textPassword"
             android:hint="Password..." />
     </android.support.design.widget.TextInputLayout>
 
@@ -99,6 +102,7 @@
             android:id="@+id/register_confirm_password_field"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:inputType="textPassword"
             android:hint="Confirm Password..." />
     </android.support.design.widget.TextInputLayout>
 

@@ -13,6 +13,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -24,8 +25,9 @@ import java.util.regex.Pattern;
 public class LoginActivity extends AppCompatActivity {
     private EditText email, password;
     private Button loginButton;
+    private SignInButton googleLogin;
     private FirebaseAuth mAuth;
-    private ImageView googleLogin, facebookLogin, githubLogin, twitterLogin;
+    private ImageView  facebookLogin, githubLogin, twitterLogin;
     private ProgressDialog mProgress;
 
 
@@ -40,9 +42,7 @@ public class LoginActivity extends AppCompatActivity {
         password=findViewById(R.id.login_password_field);
         loginButton=findViewById(R.id.login_button);
         googleLogin=findViewById(R.id.google_signin_button);
-        facebookLogin=findViewById(R.id.facebook_signin_button);
-        githubLogin=findViewById(R.id.facebook_signin_button);
-        twitterLogin=findViewById(R.id.twitter_signin_button);
+        githubLogin=findViewById(R.id.github_signin_button);
         mProgress= new ProgressDialog(this);
 
         loginButton.setOnClickListener(new View.OnClickListener() {
@@ -111,5 +111,11 @@ public class LoginActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    public void toRegistratinActivity(View view) {
+        Intent intent=new Intent(LoginActivity.this,RegistrationActivity.class);
+        startActivity(intent);
+        finish();
     }
 }
