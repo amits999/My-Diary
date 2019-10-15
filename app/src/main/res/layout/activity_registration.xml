@@ -42,6 +42,7 @@
         app:layout_constraintTop_toBottomOf="@+id/textView3">
 
         <android.support.design.widget.TextInputEditText
+            android:id="@+id/register_name_field"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Name..." />
@@ -59,6 +60,7 @@
         app:layout_constraintTop_toBottomOf="@+id/textInputLayout3">
 
         <android.support.design.widget.TextInputEditText
+            android:id="@+id/register_email_field"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Email..." />
@@ -76,6 +78,7 @@
         app:layout_constraintTop_toBottomOf="@+id/textInputLayout6">
 
         <android.support.design.widget.TextInputEditText
+            android:id="@+id/register_password_field"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Password..." />
@@ -93,13 +96,14 @@
         app:layout_constraintTop_toBottomOf="@+id/textInputLayout7">
 
         <android.support.design.widget.TextInputEditText
+            android:id="@+id/register_confirm_password_field"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Confirm Password..." />
     </android.support.design.widget.TextInputLayout>
 
     <Button
-        android:id="@+id/button"
+        android:id="@+id/register_button"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
@@ -111,4 +115,19 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textInputLayout8" />
+
+    <TextView
+        android:id="@+id/register_already_member_link"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:text="Already a member? Login"
+        android:textColor="@color/colorPrimary"
+        android:textSize="16dp"
+        android:textStyle="normal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/register_button" />
 </android.support.constraint.ConstraintLayout>
