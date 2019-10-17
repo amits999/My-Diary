@@ -41,7 +41,7 @@ public class LoginActivity extends AppCompatActivity {
     private ProgressDialog mProgress;
     private GoogleSignInClient mGoogleSignInClient;
 
-    private final static int RC_SIGN_IN=1;
+    private final static int RC_SIGN_IN=5;
 
 
     @Override
@@ -75,13 +75,7 @@ public class LoginActivity extends AppCompatActivity {
         googleLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                switch (v.getId()) {
-                    case R.id.google_signin_button:
-                        signIn();
-                        break;
-                    // ...
-                }
-
+                signIn();
             }
         });
 
