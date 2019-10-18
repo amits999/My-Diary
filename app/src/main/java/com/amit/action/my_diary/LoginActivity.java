@@ -22,6 +22,8 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
@@ -29,6 +31,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthInvalidUserException;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.auth.OAuthProvider;
 
 import java.util.regex.Pattern;
 
@@ -40,6 +43,7 @@ public class LoginActivity extends AppCompatActivity {
     private ImageView   githubLogin;
     private ProgressDialog mProgress;
     private GoogleSignInClient mGoogleSignInClient;
+    private OAuthProvider.Builder provider;
 
     private final static int RC_SIGN_IN=5;
 
@@ -79,6 +83,89 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
+        provider = OAuthProvider.newBuilder("github.com");
+
+
+        githubLogin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                loginGithub();
+            }
+        });
+
+
+    }
+
+    private void loginGithub() {
+
+        mProgress.setMessage("Please wait...");
+        mProgress.setCanceledOnTouchOutside(false);
+        mProgress.show();
+
+        Task<AuthResult> pendingResultTask = mAuth.getPendingAuthResult();
+        if (pendingResultTask != null) {
+            // There's something already here! Finish the sign-in for your user.
+            pendingResultTask
+                    .addOnSuccessListener(
+                            new OnSuccessListener<AuthResult>() {
+                                @Override
+                                public void onSuccess(AuthResult authResult) {
+                                    // User is signed in.
+                                    // IdP data available in
+                                    // authResult.getAdditionalUserInfo().getProfile().
+                                    // The OAuth access token can also be retrieved:
+                                    // authResult.getCredential().getAccessToken().
+                                    mProgress.dismiss();
+
+                                    Toast.makeText(LoginActivity.this, "Github Authentication Successful!", Toast.LENGTH_SHORT).show();
+
+                                    Intent intent =new Intent(LoginActivity.this, MainActivity.class);
+                                    startActivity(intent);
+                                    finish();
+                                }
+                            })
+                    .addOnFailureListener(
+                            new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+                                    // Handle failure.
+                                    mProgress.dismiss();
+                                    Toast.makeText(getApplicationContext(),e.getMessage(),Toast.LENGTH_SHORT).show();
+                                }
+                            });
+        } else {
+            // There's no pending result so you need to start the sign-in flow.
+            // See below.
+
+            mAuth.startActivityForSignInWithProvider(/* activity= */ this, provider.build())
+                    .addOnSuccessListener(
+                            new OnSuccessListener<AuthResult>() {
+                                @Override
+                                public void onSuccess(AuthResult authResult) {
+                                    mProgress.dismiss();
+                                    // User is signed in.
+                                    // IdP data available in
+                                    // authResult.getAdditionalUserInfo().getProfile().
+                                    // The OAuth access token can also be retrieved:
+                                    // authResult.getCredential().getAccessToken().
+                                    Toast.makeText(LoginActivity.this, "Github Authentication Successful!", Toast.LENGTH_SHORT).show();
+
+                                    Intent intent =new Intent(LoginActivity.this, MainActivity.class);
+                                    startActivity(intent);
+                                    finish();
+                                }
+                            })
+                    .addOnFailureListener(
+                            new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+                                    mProgress.dismiss();
+                                    // Handle failure.
+                                    Toast.makeText(getApplicationContext(),e.getMessage(),Toast.LENGTH_LONG).show();
+                                }
+                            });
+
+        }
 
     }
 
