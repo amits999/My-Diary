@@ -289,4 +289,9 @@ public class LoginActivity extends AppCompatActivity {
                     }
                 });
     }
+
+    public void resetPassword(View view) {
+        Intent intent=new Intent(getApplicationContext(),ResetPasswordActivity.class);
+        startActivity(intent);
+    }
 }
