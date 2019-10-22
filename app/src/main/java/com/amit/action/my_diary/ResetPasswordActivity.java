@@ -1,13 +1,18 @@
 package com.amit.action.my_diary;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 
 public class ResetPasswordActivity extends AppCompatActivity {
@@ -54,6 +59,21 @@ public class ResetPasswordActivity extends AppCompatActivity {
         mProgress.setCanceledOnTouchOutside(false);
         mProgress.show();
 
+        mAuth.sendPasswordResetEmail(email).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if (task.isSuccessful()){
+                    mProgress.dismiss();
+                    Toast.makeText(ResetPasswordActivity.this,"Sent, Check your Email",Toast.LENGTH_LONG).show();
 
+                    Intent intent=new Intent(ResetPasswordActivity.this,LoginActivity.class);
+                    startActivity(intent);
+                    finish();
+                }else{
+                    mProgress.dismiss();
+                    Toast.makeText(ResetPasswordActivity.this,task.getException().getMessage(),Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
     }
 }
