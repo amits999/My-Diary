@@ -2,8 +2,14 @@ package com.amit.action.my_diary;
 
 import android.content.Intent;
 import android.support.annotation.NonNull;
+import android.support.design.widget.NavigationView;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 
 import com.google.android.gms.auth.api.Auth;
@@ -22,6 +28,10 @@ public class MainActivity extends AppCompatActivity {
 
     private FirebaseAuth mAuth;
     private GoogleSignInClient mGoogleSignInClient;
+    private Toolbar mToolbar;
+    ActionBarDrawerToggle actionBarDrawerToggle;
+    NavigationView navigationView;
+    DrawerLayout drawerLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,22 +46,17 @@ public class MainActivity extends AppCompatActivity {
                 .build();
 
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
-    }
 
-    public void loginPage(View view) {
+        mToolbar=findViewById(R.id.main_app_bar);
+        setSupportActionBar(mToolbar);
+        getSupportActionBar().setTitle("My Diary");
 
-        mGoogleSignInClient.signOut()
-                .addOnCompleteListener(this, new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        if (task.isSuccessful()){
-                            mAuth.signOut();
-                            Intent intent=new Intent(MainActivity.this,LoginActivity.class);
-                            startActivity(intent);
-                            finish();
-                        }
-                    }
-                });
+        drawerLayout=findViewById(R.id.main_drawer_layout);
+        actionBarDrawerToggle=new ActionBarDrawerToggle(MainActivity.this,drawerLayout,R.string.drawer_open,R.string.drawer_close);
+        drawerLayout.addDrawerListener(actionBarDrawerToggle);
+        actionBarDrawerToggle.syncState();
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
 
     }
 
@@ -64,5 +69,38 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
             finish();
         }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+
+        getMenuInflater().inflate(R.menu.main_menu, menu);
+
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        if (actionBarDrawerToggle.onOptionsItemSelected(item)){
+            return true;
+        }
+
+        if (item.getItemId()==R.id.action_logout){
+            mGoogleSignInClient.signOut()
+                    .addOnCompleteListener(this, new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if (task.isSuccessful()){
+                                mAuth.signOut();
+                                Intent intent=new Intent(MainActivity.this,LoginActivity.class);
+                                startActivity(intent);
+                                finish();
+                            }
+                        }
+                    });
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 }

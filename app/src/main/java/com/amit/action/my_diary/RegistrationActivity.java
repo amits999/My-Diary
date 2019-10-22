@@ -18,6 +18,7 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -107,24 +108,19 @@ public class RegistrationActivity extends AppCompatActivity {
                     Toast.makeText(RegistrationActivity.this, "Registration Successful!", Toast.LENGTH_SHORT).show();
                     currUser=mAuth.getCurrentUser();
                     uid=currUser.getUid();
-                    mRef= FirebaseDatabase.getInstance().getReference().child("users").child(uid);
 
-                    mRef.child("name").setValue(name).addOnCompleteListener(new OnCompleteListener<Void>() {
+                    UserProfileChangeRequest profileChangeRequest= new UserProfileChangeRequest.Builder().setDisplayName(name).build();
+                    currUser.updateProfile(profileChangeRequest).addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
                             if (task.isSuccessful()){
-                                mProgress.dismiss();
-                                Toast.makeText(RegistrationActivity.this, "Info Updated", Toast.LENGTH_SHORT).show();
-
-                                Intent intent=new Intent(RegistrationActivity.this,LoginActivity.class);
-                                startActivity(intent);
-                                finish();
-                            }else {
-                                mProgress.dismiss();
-                                Toast.makeText(RegistrationActivity.this,task.getException().getMessage(),Toast.LENGTH_LONG).show();
+                                Toast.makeText(RegistrationActivity.this, "User Profile Updated", Toast.LENGTH_SHORT).show();
+                            }else{
+                                Toast.makeText(RegistrationActivity.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                             }
                         }
                     });
+
                 }else{
                     mProgress.dismiss();
                     if (task.getException() instanceof FirebaseAuthUserCollisionException){

@@ -1,4 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <group android:id="@+id/nav_menu_top">
+        <item
+            android:id="@+id/nav_my_home"
+            android:icon="@drawable/ic_format_list_bulleted_black_48dp"
+            android:title="Home" />
+        <item
+            android:id="@+id/nav_my_profile"
+            android:icon="@drawable/my_profile"
+            android:title="My Profile" />
+        <item
+            android:id="@+id/nav_imp_marked"
+            android:icon="@drawable/ic_star"
+            android:title="Important Marked" />
+    </group>
+
+
+    <group android:id="@+id/nav_bottom">
+        <item
+            android:id="@+id/nav_about_us"
+            android:icon="@drawable/ic_about_us"
+            android:title="About Us" />
+    </group>
+
 </menu>
