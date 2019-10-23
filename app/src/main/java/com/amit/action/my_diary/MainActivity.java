@@ -73,6 +73,13 @@ public class MainActivity extends AppCompatActivity {
                 return false;
             }
         });
+
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(MainActivity.this,AddNotesActivity.class));
+            }
+        });
     }
 
     private void UserMenuSelector(MenuItem menuItem) {
