@@ -14,6 +14,16 @@ public class AddNotesActivity extends AppCompatActivity {
         setContentView(R.layout.activity_add_notes);
 
         mToolbar=findViewById(R.id.add_notes_bar);
+        setSupportActionBar(mToolbar);
+        getSupportActionBar().setTitle(null);
 
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;
     }
 }
