@@ -1,14 +1,17 @@
 package com.amit.action.my_diary;
 
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.Toolbar;
+import androidx.appcompat.widget.Toolbar;
 import android.view.Menu;
 import android.widget.EditText;
+
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 public class AddNotesActivity extends AppCompatActivity {
     private Toolbar mToolbar,bottomToolbar;
     private EditText titleField,notesField;
+    private FloatingActionButton fab;
 
 
 
@@ -21,7 +24,7 @@ public class AddNotesActivity extends AppCompatActivity {
         bottomToolbar=findViewById(R.id.bottomAppBar);
 
         setSupportActionBar(mToolbar);
-        getSupportActionBar().setTitle(null);
+        getSupportActionBar().setTitle("New Note");
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
@@ -36,7 +39,7 @@ public class AddNotesActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
 
-        getMenuInflater().inflate(R.menu.add_down_menu,menu);
+        //getMenuInflater().inflate(R.menu.add_down_menu,menu);
 
         return super.onCreateOptionsMenu(menu);
     }
