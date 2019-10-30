@@ -4,9 +4,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
+import android.widget.EditText;
 
 public class AddNotesActivity extends AppCompatActivity {
     private Toolbar mToolbar,bottomToolbar;
+    private EditText titleField,notesField;
+
 
 
     @Override
