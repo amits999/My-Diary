@@ -2,6 +2,9 @@ package com.amit.action.my_diary;
 
 import android.content.Intent;
 import androidx.annotation.NonNull;
+
+import com.firebase.ui.database.FirebaseRecyclerAdapter;
+import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 import androidx.drawerlayout.widget.DrawerLayout;
@@ -9,10 +12,16 @@ import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -22,6 +31,8 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -32,6 +43,10 @@ public class MainActivity extends AppCompatActivity {
     NavigationView navigationView;
     DrawerLayout drawerLayout;
     private FloatingActionButton fab;
+    private FirebaseUser curUser;
+
+    private RecyclerView recyclerView;
+    private DatabaseReference mRef;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,7 +74,7 @@ public class MainActivity extends AppCompatActivity {
 
         navigationView=findViewById(R.id.main_navigation_view);
         fab=findViewById(R.id.main_floatingActionButton);
-
+        curUser=mAuth.getCurrentUser();
 
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
@@ -76,13 +91,19 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(new Intent(MainActivity.this,AddNotesActivity.class));
             }
         });
+
+        recyclerView=findViewById(R.id.main_recyclerView);
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setLayoutManager(new GridLayoutManager(this,2));
+
+        mRef= FirebaseDatabase.getInstance().getReference().child(curUser.getUid());
     }
 
     private void UserMenuSelector(MenuItem menuItem) {
         switch (menuItem.getItemId()) {
 
             case R.id.nav_my_home:
-                drawerLayout.closeDrawer(Gravity.START);
+                drawerLayout.closeDrawer(Gravity.LEFT);
                 Toast.makeText(getApplicationContext(), "You are on HOME!", Toast.LENGTH_SHORT).show();
                 break;
         }
@@ -97,6 +118,53 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
             finish();
         }
+
+        FirebaseRecyclerOptions options=new FirebaseRecyclerOptions.Builder<Model>()
+                .setQuery(mRef,Model.class)
+                .build();
+
+        FirebaseRecyclerAdapter<Model, NotesViewHolder> firebaseRecyclerAdapter
+                =new FirebaseRecyclerAdapter<Model, NotesViewHolder>(options) {
+            @Override
+            protected void onBindViewHolder(@NonNull NotesViewHolder holder, int position, @NonNull Model model) {
+                final String postKey=getRef(position).getKey();
+
+                holder.setTitle(model.getTitle());
+                holder.setNote(model.getNote());
+            }
+
+            @NonNull
+            @Override
+            public NotesViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+
+                View view= LayoutInflater.from(parent.getContext()).inflate(R.layout.notes_layout,parent,false);
+                NotesViewHolder viewHolder=new NotesViewHolder(view);
+                return viewHolder;
+            }
+        };
+
+        recyclerView.setAdapter(firebaseRecyclerAdapter);
+        firebaseRecyclerAdapter.startListening();
+    }
+
+    public static class NotesViewHolder extends RecyclerView.ViewHolder{
+        View mView;
+
+        public NotesViewHolder(View itemView) {
+            super(itemView);
+            this.mView = itemView;
+        }
+
+        public void setTitle(String t){
+            TextView title= mView.findViewById(R.id.note_title_text);
+            title.setText(t);
+        }
+
+        public void setNote(String n){
+            TextView note= mView.findViewById(R.id.notes_text);
+            note.setText(n);
+        }
+
     }
 
     @Override

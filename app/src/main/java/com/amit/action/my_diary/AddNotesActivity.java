@@ -33,7 +33,7 @@ public class AddNotesActivity extends AppCompatActivity {
     private DatabaseReference mRef;
     private FirebaseUser mUser;
     private FirebaseAuth mAuth;
-    long childCount=0;
+    long childCount;
 
 
 
@@ -70,6 +70,25 @@ public class AddNotesActivity extends AppCompatActivity {
         });
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        mRef.child(mUser.getUid()).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()){
+                    childCount=dataSnapshot.getChildrenCount();
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
     private void verifyDetails() {
         String title=titleField.getText().toString().trim();
         String note=notesField.getText().toString().trim();
@@ -90,26 +109,14 @@ public class AddNotesActivity extends AppCompatActivity {
         mProgress.setCanceledOnTouchOutside(false);
         mProgress.show();
 
-        mRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if (dataSnapshot.child(mUser.getUid()).exists()){
-                    childCount=dataSnapshot.getChildrenCount();
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-
 
         HashMap map =new HashMap<>();
         map.put("title",title);
         map.put("note",note);
 
-        mRef.child(mUser.getUid()).child("note"+childCount +1).setValue(map).addOnCompleteListener(new OnCompleteListener<Void>() {
+        childCount+=1;
+
+        mRef.child(mUser.getUid()).child("note"+childCount).setValue(map).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 if (task.isSuccessful()){
