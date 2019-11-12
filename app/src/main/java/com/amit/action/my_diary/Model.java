@@ -1,8 +1,7 @@
 package com.amit.action.my_diary;
 
 public class Model {
-    String title;
-    String note;
+    String title,note;
 
     public Model() {
     }

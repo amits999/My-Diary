@@ -13,14 +13,17 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.os.Handler;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -45,8 +48,11 @@ public class MainActivity extends AppCompatActivity {
     private FloatingActionButton fab;
     private FirebaseUser curUser;
 
-    private RecyclerView recyclerView;
+    boolean doubleTap=false;
+
+    private RecyclerView mRecyclerView;
     private DatabaseReference mRef;
+    private GridLayoutManager gridLayoutManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,13 +60,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         mAuth=FirebaseAuth.getInstance();
-
-        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken(getString(R.string.default_web_client_id))
-                .requestEmail()
-                .build();
-
-        mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
+        curUser=mAuth.getCurrentUser();
+        mRef= FirebaseDatabase.getInstance().getReference().child("notes").child(curUser.getUid());
 
         mToolbar=findViewById(R.id.main_app_bar);
         setSupportActionBar(mToolbar);
@@ -74,7 +75,6 @@ public class MainActivity extends AppCompatActivity {
 
         navigationView=findViewById(R.id.main_navigation_view);
         fab=findViewById(R.id.main_floatingActionButton);
-        curUser=mAuth.getCurrentUser();
 
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
@@ -92,11 +92,15 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        recyclerView=findViewById(R.id.main_recyclerView);
-        recyclerView.setHasFixedSize(true);
-        recyclerView.setLayoutManager(new GridLayoutManager(this,2));
+        mRecyclerView=findViewById(R.id.main_recyclerView);
+        mRecyclerView.setHasFixedSize(true);
 
-        mRef= FirebaseDatabase.getInstance().getReference().child(curUser.getUid());
+        gridLayoutManager=new GridLayoutManager(this,2);
+        //gridLayoutManager.setReverseLayout(true);
+        //gridLayoutManager.setStackFromEnd(true);
+
+        mRecyclerView.setLayoutManager(gridLayoutManager);
+
     }
 
     private void UserMenuSelector(MenuItem menuItem) {
@@ -112,6 +116,15 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
+
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getString(R.string.default_web_client_id))
+                .requestEmail()
+                .build();
+
+        mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
+
+
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if (currentUser==null){
             Intent intent=new Intent(MainActivity.this,LoginActivity.class);
@@ -125,12 +138,15 @@ public class MainActivity extends AppCompatActivity {
 
         FirebaseRecyclerAdapter<Model, NotesViewHolder> firebaseRecyclerAdapter
                 =new FirebaseRecyclerAdapter<Model, NotesViewHolder>(options) {
+
             @Override
             protected void onBindViewHolder(@NonNull NotesViewHolder holder, int position, @NonNull Model model) {
                 final String postKey=getRef(position).getKey();
 
                 holder.setTitle(model.getTitle());
                 holder.setNote(model.getNote());
+
+
             }
 
             @NonNull
@@ -143,7 +159,7 @@ public class MainActivity extends AppCompatActivity {
             }
         };
 
-        recyclerView.setAdapter(firebaseRecyclerAdapter);
+        mRecyclerView.setAdapter(firebaseRecyclerAdapter);
         firebaseRecyclerAdapter.startListening();
     }
 
@@ -165,6 +181,24 @@ public class MainActivity extends AppCompatActivity {
             note.setText(n);
         }
 
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (doubleTap){
+            super.onBackPressed();
+        }
+        else {
+            Toast.makeText(getApplicationContext(), "Double tap back to exit the app!", Toast.LENGTH_SHORT).show();
+            doubleTap=true;
+            Handler handler=new Handler();
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    doubleTap=false;
+                }
+            },500); //half second
+        }
     }
 
     @Override
