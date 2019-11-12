@@ -146,7 +146,14 @@ public class MainActivity extends AppCompatActivity {
                 holder.setTitle(model.getTitle());
                 holder.setNote(model.getNote());
 
-
+                holder.mView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent=new Intent(MainActivity.this,CompleteNoteActivity.class);
+                        intent.putExtra("postKey",postKey);
+                        startActivity(intent);
+                    }
+                });
             }
 
             @NonNull

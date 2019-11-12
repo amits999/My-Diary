@@ -11,7 +11,8 @@
         android:roundIcon="@mipmap/diary"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".AddNotesActivity"></activity>
+        <activity android:name=".CompleteNoteActivity"></activity>
+        <activity android:name=".AddNotesActivity" />
         <activity android:name=".ResetPasswordActivity" />
         <activity android:name=".RegistrationActivity" />
         <activity android:name=".LoginActivity" />
