@@ -6,4 +6,11 @@
     android:layout_height="match_parent"
     tools:context=".CompleteNoteActivity">
 
+    <include
+        android:id="@+id/complete_notes_bar"
+        layout="@layout/app_bar_layout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"></include>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

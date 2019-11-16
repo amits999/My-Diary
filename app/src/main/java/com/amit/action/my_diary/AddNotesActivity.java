@@ -7,6 +7,9 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import androidx.appcompat.widget.Toolbar;
+
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.View;
 import android.widget.EditText;
@@ -23,6 +26,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.HashMap;
 
 public class AddNotesActivity extends AppCompatActivity {
@@ -33,7 +38,9 @@ public class AddNotesActivity extends AppCompatActivity {
     private DatabaseReference mRef;
     private FirebaseUser mUser;
     private FirebaseAuth mAuth;
-    long childCount;
+    //private boolean textChanged=false;
+    private String tit=null,not=null;
+    private String saveCurrentDate=null,saveCurrentTime=null,time=null,key=null;
 
 
 
@@ -46,10 +53,10 @@ public class AddNotesActivity extends AppCompatActivity {
         mAuth=FirebaseAuth.getInstance();
         mUser=mAuth.getCurrentUser();
 
-        mRef= FirebaseDatabase.getInstance().getReference().child("notes");
-
         mToolbar=findViewById(R.id.add_notes_bar);
         bottomToolbar=findViewById(R.id.bottomAppBar);
+
+        Intent intent =getIntent();
 
         setSupportActionBar(mToolbar);
         getSupportActionBar().setTitle("New Note");
@@ -61,29 +68,41 @@ public class AddNotesActivity extends AppCompatActivity {
         notesField=findViewById(R.id.add_notes_note);
         fab=findViewById(R.id.fab);
 
+        if(intent.getExtras().getString("uniqueKey").equals("from_main")) {
+
+            getSupportActionBar().setTitle("Your Note");
+
+            key=intent.getStringExtra("postKey");
+            System.out.println(key);
+            mRef= FirebaseDatabase.getInstance().getReference().child("notes").child(mUser.getUid()).child(key);
+            mRef.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    if (dataSnapshot.exists()){
+                        tit=dataSnapshot.child("title").getValue().toString();
+                        titleField.setText(tit);
+                        not=dataSnapshot.child("note").getValue().toString();
+                        notesField.setText(not);
+                    }else{
+                        Toast.makeText(AddNotesActivity.this, "DataSnapshot does not exist", Toast.LENGTH_SHORT).show();
+                    }
+
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
+        }
+
+        mRef= FirebaseDatabase.getInstance().getReference().child("notes");
 
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 verifyDetails();
-            }
-        });
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-
-        mRef.child(mUser.getUid()).addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if (dataSnapshot.exists()){
-                    childCount=dataSnapshot.getChildrenCount();
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
 
             }
         });
@@ -105,31 +124,73 @@ public class AddNotesActivity extends AppCompatActivity {
             return;
         }
 
-        mProgress.setMessage("Submitting your notes safely :)");
-        mProgress.setCanceledOnTouchOutside(false);
-        mProgress.show();
+        System.out.println(title+" "+tit);
 
+        if (title.equals(tit) && note.equals(not)){
+            Toast.makeText(this, "No Changes found!", Toast.LENGTH_SHORT).show();
+
+        }else{
+            mProgress.setMessage("Submitting your notes safely :)");
+            mProgress.setCanceledOnTouchOutside(false);
+            mProgress.show();
+            saveNote(title,note);
+        }
+
+
+    }
+
+    private void saveNote(String title, String note) {
+
+        long milis=System.currentTimeMillis();
+        time=Long.toString(milis);
+
+        Calendar calendarForDate= Calendar.getInstance();
+        SimpleDateFormat currentDate=new SimpleDateFormat("dd:MMMM:yyyy");
+        saveCurrentDate=currentDate.format(calendarForDate.getTime());
+
+        Calendar calendarForTime= Calendar.getInstance();
+        SimpleDateFormat currentTime=new SimpleDateFormat("HH:mm");
+        saveCurrentTime=currentTime.format(calendarForTime.getTime());
 
         HashMap map =new HashMap<>();
         map.put("title",title);
         map.put("note",note);
+        map.put("date",saveCurrentDate);
+        map.put("time",saveCurrentTime);
 
-        childCount+=1;
-
-        mRef.child(mUser.getUid()).child("note"+childCount).setValue(map).addOnCompleteListener(new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(@NonNull Task<Void> task) {
-                if (task.isSuccessful()){
-                    mProgress.dismiss();
-                    Toast.makeText(AddNotesActivity.this, "Note added safely!", Toast.LENGTH_SHORT).show();
-                    startActivity(new Intent(AddNotesActivity.this,MainActivity.class));
-                    finish();
-                }else{
-                    mProgress.dismiss();
-                    Toast.makeText(AddNotesActivity.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+        if (key!=null){
+            mRef.child(mUser.getUid()).child(key).setValue(map).addOnCompleteListener(new OnCompleteListener<Void>() {
+                @Override
+                public void onComplete(@NonNull Task<Void> task) {
+                    if (task.isSuccessful()){
+                        mProgress.dismiss();
+                        Toast.makeText(AddNotesActivity.this, "Note added safely!", Toast.LENGTH_SHORT).show();
+                        startActivity(new Intent(AddNotesActivity.this,MainActivity.class));
+                        finish();
+                    }else{
+                        mProgress.dismiss();
+                        Toast.makeText(AddNotesActivity.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                    }
                 }
-            }
-        });
+            });
+        }else{
+            mRef.child(mUser.getUid()).child(time).setValue(map).addOnCompleteListener(new OnCompleteListener<Void>() {
+                @Override
+                public void onComplete(@NonNull Task<Void> task) {
+                    if (task.isSuccessful()){
+                        mProgress.dismiss();
+                        Toast.makeText(AddNotesActivity.this, "Note added safely!", Toast.LENGTH_SHORT).show();
+                        startActivity(new Intent(AddNotesActivity.this,MainActivity.class));
+                        finish();
+                    }else{
+                        mProgress.dismiss();
+                        Toast.makeText(AddNotesActivity.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
+        }
+
+
     }
 
     @Override

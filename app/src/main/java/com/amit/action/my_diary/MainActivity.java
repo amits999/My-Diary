@@ -88,7 +88,9 @@ public class MainActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(MainActivity.this,AddNotesActivity.class));
+                Intent intent=new Intent(MainActivity.this,AddNotesActivity.class);
+                intent.putExtra("uniqueKey","from_create");
+                startActivity(intent);
             }
         });
 
@@ -149,8 +151,9 @@ public class MainActivity extends AppCompatActivity {
                 holder.mView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Intent intent=new Intent(MainActivity.this,CompleteNoteActivity.class);
+                        Intent intent=new Intent(MainActivity.this,AddNotesActivity.class);
                         intent.putExtra("postKey",postKey);
+                        intent.putExtra("uniqueKey","from_main");
                         startActivity(intent);
                     }
                 });
