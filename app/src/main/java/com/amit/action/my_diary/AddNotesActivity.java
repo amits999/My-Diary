@@ -1,9 +1,11 @@
 package com.amit.action.my_diary;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import androidx.appcompat.widget.Toolbar;
@@ -11,6 +13,7 @@ import androidx.appcompat.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -202,8 +205,39 @@ public class AddNotesActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
 
-        //getMenuInflater().inflate(R.menu.add_down_menu,menu);
+        getMenuInflater().inflate(R.menu.add_up_menu,menu);
 
         return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        if (item.getItemId()==R.id.up_delete){
+
+            AlertDialog.Builder builder=new AlertDialog.Builder(AddNotesActivity.this);
+            builder.setTitle("Confirm Delete!");
+            builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    if (key!=null){
+                        mRef.child(mUser.getUid()).child(key).removeValue();
+                        onBackPressed();
+                    }else{
+                        onBackPressed();
+                    }
+                }
+            });
+            builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                }
+            });
+            AlertDialog alertDialog=builder.create();
+            alertDialog.show();
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 }

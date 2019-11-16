@@ -1,5 +1,6 @@
 package com.amit.action.my_diary;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import androidx.annotation.NonNull;
 
@@ -7,6 +8,8 @@ import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
+
+import androidx.appcompat.app.AlertDialog;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
@@ -227,20 +230,37 @@ public class MainActivity extends AppCompatActivity {
         }
 
         if (item.getItemId()==R.id.action_logout){
-            mGoogleSignInClient.signOut()
-                    .addOnCompleteListener(this, new OnCompleteListener<Void>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Void> task) {
-                            if (task.isSuccessful()){
-                                mAuth.signOut();
-                                Intent intent=new Intent(MainActivity.this,LoginActivity.class);
-                                startActivity(intent);
-                                finish();
-                            }
-                        }
-                    });
+
+            AlertDialog.Builder builder=new AlertDialog.Builder(MainActivity.this);
+            builder.setTitle("Dou you really want to logout!");
+            builder.setPositiveButton("Logout", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    mGoogleSignInClient.signOut();
+                    mAuth.signOut();
+                    sentUserToLoginActivity();
+                }
+            });
+            builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                }
+            });
+            AlertDialog alertDialog=builder.create();
+            alertDialog.show();
         }
 
         return super.onOptionsItemSelected(item);
     }
+
+    private void sentUserToLoginActivity() {
+
+        Intent mainIntent = new Intent(MainActivity.this, LoginActivity.class);
+        mainIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(mainIntent);
+        finish();
+    }
+
+
 }
