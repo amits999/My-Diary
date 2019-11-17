@@ -67,6 +67,8 @@
             android:layout_gravity="bottom"
             app:backgroundTint="@color/colorPrimaryDark"
             app:buttonGravity="bottom|top"
+            app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+            app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
             app:fabAlignmentMode="end" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton

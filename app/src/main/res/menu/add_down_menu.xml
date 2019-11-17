@@ -3,11 +3,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:icon="@drawable/undo"
-        app:showAsAction="always"
-        android:title="Undo" />
+        android:id="@+id/undo"
+        android:icon="@drawable/ic_undo_black_24dp"
+        android:title="Undo"
+        app:showAsAction="always" />
     <item
-        android:icon="@drawable/redo"
-        app:showAsAction="always"
-        android:title="Redo" />
+        android:id="@+id/redo"
+        android:icon="@drawable/ic_redo_black_24dp"
+        android:title="Redo"
+        app:showAsAction="always" />
 </menu>

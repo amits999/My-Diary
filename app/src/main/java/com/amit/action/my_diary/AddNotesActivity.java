@@ -20,6 +20,7 @@ import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.bottomappbar.BottomAppBar;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -34,7 +35,8 @@ import java.util.Calendar;
 import java.util.HashMap;
 
 public class AddNotesActivity extends AppCompatActivity {
-    private Toolbar mToolbar,bottomToolbar;
+    private Toolbar mToolbar;
+    private BottomAppBar bottomAppBar;
     private EditText titleField,notesField;
     private ProgressDialog mProgress;
     private FloatingActionButton fab;
@@ -57,7 +59,11 @@ public class AddNotesActivity extends AppCompatActivity {
         mUser=mAuth.getCurrentUser();
 
         mToolbar=findViewById(R.id.add_notes_bar);
-        bottomToolbar=findViewById(R.id.bottomAppBar);
+
+        bottomAppBar=findViewById(R.id.bottomAppBar);
+        bottomAppBar.replaceMenu(R.menu.add_down_menu);
+
+        bottomAppBar.setTitle("Edited: 9 Nov");
 
         Intent intent =getIntent();
 
@@ -99,6 +105,7 @@ public class AddNotesActivity extends AppCompatActivity {
             });
         }
 
+
         mRef= FirebaseDatabase.getInstance().getReference().child("notes");
 
         fab.setOnClickListener(new View.OnClickListener() {
@@ -107,6 +114,38 @@ public class AddNotesActivity extends AppCompatActivity {
 
                 verifyDetails();
 
+            }
+        });
+
+        final TextViewUndoRedo nTextViewUndoRedo = new TextViewUndoRedo(titleField);
+        final TextViewUndoRedo mTextViewUndoRedo = new TextViewUndoRedo(notesField);
+
+        bottomAppBar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                if (item.getItemId()==R.id.undo){
+                    if (titleField.hasFocus()){
+                        nTextViewUndoRedo.undo();
+                    }
+
+                    if (notesField.hasFocus()){
+                        mTextViewUndoRedo.undo();
+                    }
+
+                }
+
+                if (item.getItemId()==R.id.redo){
+                    if (titleField.hasFocus()){
+                        nTextViewUndoRedo.redo();
+                    }
+
+                    if (notesField.hasFocus()){
+                        mTextViewUndoRedo.redo();
+                    }
+                }
+
+
+                return false;
             }
         });
     }
@@ -239,5 +278,7 @@ public class AddNotesActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+
     }
+
 }
