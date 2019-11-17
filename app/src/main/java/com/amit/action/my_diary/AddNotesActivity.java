@@ -125,22 +125,41 @@ public class AddNotesActivity extends AppCompatActivity {
             public boolean onMenuItemClick(MenuItem item) {
                 if (item.getItemId()==R.id.undo){
                     if (titleField.hasFocus()){
-                        nTextViewUndoRedo.undo();
+
+                        if (!nTextViewUndoRedo.getCanUndo()){
+                            Toast.makeText(AddNotesActivity.this, "Cannot Undo!", Toast.LENGTH_SHORT).show();
+                        }else{
+                            nTextViewUndoRedo.undo();
+                        }
                     }
 
                     if (notesField.hasFocus()){
-                        mTextViewUndoRedo.undo();
+
+                        if (!mTextViewUndoRedo.getCanUndo()){
+                            Toast.makeText(AddNotesActivity.this, "Cannot Undo!", Toast.LENGTH_SHORT).show();
+                        }else{
+                            mTextViewUndoRedo.undo();
+                        }
                     }
 
                 }
 
                 if (item.getItemId()==R.id.redo){
                     if (titleField.hasFocus()){
-                        nTextViewUndoRedo.redo();
+
+                        if (!nTextViewUndoRedo.getCanRedo()){
+                            Toast.makeText(AddNotesActivity.this, "Cannot Redo!", Toast.LENGTH_SHORT).show();
+                        }else{
+                            nTextViewUndoRedo.redo();
+                        }
                     }
 
                     if (notesField.hasFocus()){
-                        mTextViewUndoRedo.redo();
+                        if (!mTextViewUndoRedo.getCanRedo()){
+                            Toast.makeText(AddNotesActivity.this, "Cannot Redo!", Toast.LENGTH_SHORT).show();
+                        }else{
+                            mTextViewUndoRedo.redo();
+                        }
                     }
                 }
 
