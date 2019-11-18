@@ -117,6 +117,11 @@ public class AddNotesActivity extends AppCompatActivity {
             }
         });
 
+        /*if (!titleField.hasFocus() && !notesField.hasFocus()){
+            bottomAppBar.getMenu().getItem(R.id.undo).setIcon(R.drawable.undo_grey);
+            bottomAppBar.getMenu().getItem(R.id.redo).setIcon(R.drawable.redo_grey);
+        }*/
+
         final TextViewUndoRedo nTextViewUndoRedo = new TextViewUndoRedo(titleField);
         final TextViewUndoRedo mTextViewUndoRedo = new TextViewUndoRedo(notesField);
 

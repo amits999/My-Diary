@@ -40,6 +40,8 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import de.hdodenhof.circleimageview.CircleImageView;
+
 public class MainActivity extends AppCompatActivity {
 
     private FirebaseAuth mAuth;
@@ -50,6 +52,8 @@ public class MainActivity extends AppCompatActivity {
     DrawerLayout drawerLayout;
     private FloatingActionButton fab;
     private FirebaseUser curUser;
+    private CircleImageView headerImage;
+    private TextView headerUserName;
 
     boolean doubleTap=false;
 
@@ -78,6 +82,11 @@ public class MainActivity extends AppCompatActivity {
 
         navigationView=findViewById(R.id.main_navigation_view);
         fab=findViewById(R.id.main_floatingActionButton);
+
+        View navView=navigationView.inflateHeaderView(R.layout.navigation_header);
+
+        headerImage=findViewById(R.id.header_image);
+        headerUserName=findViewById(R.id.header_username);
 
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
