@@ -43,6 +43,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.squareup.picasso.Picasso;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -72,12 +73,6 @@ public class MainActivity extends AppCompatActivity {
 
         mAuth=FirebaseAuth.getInstance();
         curUser=mAuth.getCurrentUser();
-
-        if (curUser==null){
-            Intent intent=new Intent(MainActivity.this,LoginActivity.class);
-            startActivity(intent);
-            finish();
-        }
 
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.default_web_client_id))
@@ -161,6 +156,11 @@ public class MainActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
 
+        if (curUser==null){
+            Intent intent=new Intent(MainActivity.this,LoginActivity.class);
+            startActivity(intent);
+            finish();
+        }
         mRef= FirebaseDatabase.getInstance().getReference().child("notes").child(curUser.getUid());
 
         if (!isNetworkAvailable()){
@@ -179,6 +179,10 @@ public class MainActivity extends AppCompatActivity {
             ad.show();
         }
 
+        if (curUser.getPhotoUrl()!=null){
+            Picasso.get().load(curUser.getPhotoUrl()).into(headerImage);
+        }
+        headerUserName.setText(curUser.getDisplayName());
 
         FirebaseRecyclerOptions options=new FirebaseRecyclerOptions.Builder<Model>()
                 .setQuery(mRef,Model.class)

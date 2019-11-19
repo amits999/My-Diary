@@ -38,6 +38,21 @@ public class ProfileActivity extends AppCompatActivity {
         mRef= FirebaseDatabase.getInstance().getReference().child("notes").child(mUser.getUid());
         mProgress=new ProgressDialog(this);
 
+        mToolbar=findViewById(R.id.profile_bar);
+        setSupportActionBar(mToolbar);
+        getSupportActionBar().setTitle("My Profile");
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+
+
+
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
         if (!isNetworkAvailable()){
             final AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
 
@@ -53,21 +68,6 @@ public class ProfileActivity extends AppCompatActivity {
             AlertDialog ad=alertDialog.create();
             ad.show();
         }
-
-        mToolbar=findViewById(R.id.profile_bar);
-        setSupportActionBar(mToolbar);
-        getSupportActionBar().setTitle("My Profile");
-
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
-
-
-
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
 
         if (mUser==null){
             Intent intent=new Intent(ProfileActivity.this,LoginActivity.class);
