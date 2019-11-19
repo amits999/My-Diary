@@ -58,6 +58,8 @@ public class LoginActivity extends AppCompatActivity {
         googleLogin=findViewById(R.id.google_signin_button);
         githubLogin=findViewById(R.id.github_signin_button);
         mProgress= new ProgressDialog(this);
+        mProgress.setTitle("Logging In...");
+        mProgress.setCanceledOnTouchOutside(false);
 
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -94,9 +96,6 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void loginGithub() {
-
-        mProgress.setMessage("Please wait...");
-        mProgress.setCanceledOnTouchOutside(false);
         mProgress.show();
 
         Task<AuthResult> pendingResultTask = mAuth.getPendingAuthResult();
@@ -198,9 +197,6 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void loginUser(String emailId, String pass) {
-
-        mProgress.setTitle("Logging In...");
-        mProgress.setCanceledOnTouchOutside(false);
         mProgress.show();
 
         mAuth.signInWithEmailAndPassword(emailId,pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
@@ -260,12 +256,15 @@ public class LoginActivity extends AppCompatActivity {
     private void firebaseAuthWithGoogle(GoogleSignInAccount acct) {
         Log.d("Firebase google Auth", "firebaseAuthWithGoogle:" + acct.getId());
 
+        mProgress.show();
+
         AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
         mAuth.signInWithCredential(credential)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
+                            mProgress.dismiss();
                             // Sign in success, update UI with the signed-in user's information
                             FirebaseUser user = mAuth.getCurrentUser();
 
@@ -276,6 +275,7 @@ public class LoginActivity extends AppCompatActivity {
                             Toast.makeText(LoginActivity.this, "Authentication Successful! "+user.getDisplayName(), Toast.LENGTH_SHORT).show();
 
                         } else {
+                            mProgress.dismiss();
                             // If sign in fails, display a message to the user.
                             Log.w("Google Result Login", "signInWithCredential:failure", task.getException());
                             //Snackbar.make(findViewById(R.id.main_layout), "Authentication Failed.", Snackbar.LENGTH_SHORT).show();

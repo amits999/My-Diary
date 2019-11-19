@@ -1,5 +1,6 @@
 package com.amit.action.my_diary;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import androidx.annotation.NonNull;
@@ -13,6 +14,9 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
+
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -68,7 +72,19 @@ public class MainActivity extends AppCompatActivity {
 
         mAuth=FirebaseAuth.getInstance();
         curUser=mAuth.getCurrentUser();
-        mRef= FirebaseDatabase.getInstance().getReference().child("notes").child(curUser.getUid());
+
+        if (curUser==null){
+            Intent intent=new Intent(MainActivity.this,LoginActivity.class);
+            startActivity(intent);
+            finish();
+        }
+
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getString(R.string.default_web_client_id))
+                .requestEmail()
+                .build();
+
+        mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
 
         mToolbar=findViewById(R.id.main_app_bar);
         setSupportActionBar(mToolbar);
@@ -85,8 +101,8 @@ public class MainActivity extends AppCompatActivity {
 
         View navView=navigationView.inflateHeaderView(R.layout.navigation_header);
 
-        headerImage=findViewById(R.id.header_image);
-        headerUserName=findViewById(R.id.header_username);
+        headerImage=navView.findViewById(R.id.header_image);
+        headerUserName=navView.findViewById(R.id.header_username);
 
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
@@ -94,6 +110,13 @@ public class MainActivity extends AppCompatActivity {
 
                 UserMenuSelector(menuItem);
                 return false;
+            }
+        });
+
+        headerImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(MainActivity.this,ProfileActivity.class));
             }
         });
 
@@ -127,24 +150,35 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
+
     @Override
     protected void onStart() {
         super.onStart();
 
-        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken(getString(R.string.default_web_client_id))
-                .requestEmail()
-                .build();
+        mRef= FirebaseDatabase.getInstance().getReference().child("notes").child(curUser.getUid());
 
-        mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
+        if (!isNetworkAvailable()){
+            final AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
 
-
-        FirebaseUser currentUser = mAuth.getCurrentUser();
-        if (currentUser==null){
-            Intent intent=new Intent(MainActivity.this,LoginActivity.class);
-            startActivity(intent);
-            finish();
+            alertDialog.setTitle("Info");
+            alertDialog.setMessage("Internet not available, Cross check your internet connectivity and try again");
+            alertDialog.setIcon(android.R.drawable.ic_dialog_alert);
+            alertDialog.setNeutralButton("OK", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                }
+            });
+            AlertDialog ad=alertDialog.create();
+            ad.show();
         }
+
 
         FirebaseRecyclerOptions options=new FirebaseRecyclerOptions.Builder<Model>()
                 .setQuery(mRef,Model.class)

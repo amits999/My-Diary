@@ -230,7 +230,7 @@ public class AddNotesActivity extends AppCompatActivity {
                 public void onComplete(@NonNull Task<Void> task) {
                     if (task.isSuccessful()){
                         mProgress.dismiss();
-                        Toast.makeText(AddNotesActivity.this, "Note added safely!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(AddNotesActivity.this, "Note edited", Toast.LENGTH_SHORT).show();
                         startActivity(new Intent(AddNotesActivity.this,MainActivity.class));
                         finish();
                     }else{
@@ -245,7 +245,7 @@ public class AddNotesActivity extends AppCompatActivity {
                 public void onComplete(@NonNull Task<Void> task) {
                     if (task.isSuccessful()){
                         mProgress.dismiss();
-                        Toast.makeText(AddNotesActivity.this, "Note added safely!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(AddNotesActivity.this, "New note added!", Toast.LENGTH_SHORT).show();
                         startActivity(new Intent(AddNotesActivity.this,MainActivity.class));
                         finish();
                     }else{
