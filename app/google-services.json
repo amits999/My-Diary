@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "50169181933-8p7ii8lbc6v23k2pbmul04bu72a7c3vh.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.amit.action.my_diary",
+            "certificate_hash": "7e611b97a3ce0d5b943bbed1075182721c84019e"
+          }
+        },
+        {
           "client_id": "50169181933-o3mg44op630vjq4s67uk0vaml4igk50v.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
