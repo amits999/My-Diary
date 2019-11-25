@@ -77,7 +77,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:layout_anchor="@id/bottomAppBar"
-            app:srcCompat="@drawable/ic_send_black_24dp" />
+            app:srcCompat="@drawable/ic_save_black_24dp" />
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 

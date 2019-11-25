@@ -1,5 +1,7 @@
 package com.amit.action.my_diary;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -15,8 +17,13 @@ import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.squareup.picasso.Picasso;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -45,7 +52,31 @@ public class ProfileActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
+        profileImage=findViewById(R.id.profile_image);
+        userName=findViewById(R.id.profile_name);
+        userEmail=findViewById(R.id.profile_email);
+        notesCount=findViewById(R.id.profile_notes_count);
 
+        if (mUser.getPhotoUrl()!=null){
+            Picasso.get().load(mUser.getPhotoUrl()).into(profileImage);
+        }
+        userName.setText(mUser.getDisplayName());
+        userEmail.setText(mUser.getEmail());
+
+        mRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()){
+                    long count=dataSnapshot.getChildrenCount();
+                    notesCount.setText(String.valueOf(count));
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
 
     }
 

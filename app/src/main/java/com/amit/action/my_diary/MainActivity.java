@@ -64,7 +64,7 @@ public class MainActivity extends AppCompatActivity {
 
     private RecyclerView mRecyclerView;
     private DatabaseReference mRef;
-    private GridLayoutManager gridLayoutManager;
+    private LinearLayoutManager linearLayoutManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -127,11 +127,15 @@ public class MainActivity extends AppCompatActivity {
         mRecyclerView=findViewById(R.id.main_recyclerView);
         mRecyclerView.setHasFixedSize(true);
 
-        gridLayoutManager=new GridLayoutManager(this,2);
+        //gridLayoutManager=new GridLayoutManager(this,2);
         //gridLayoutManager.setReverseLayout(true);
         //gridLayoutManager.setStackFromEnd(true);
 
-        mRecyclerView.setLayoutManager(gridLayoutManager);
+        linearLayoutManager=new LinearLayoutManager(this);
+        linearLayoutManager.setReverseLayout(true);
+        linearLayoutManager.setStackFromEnd(true);
+
+        mRecyclerView.setLayoutManager(linearLayoutManager);
 
     }
 
