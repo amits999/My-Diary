@@ -15,6 +15,7 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -65,6 +66,7 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView mRecyclerView;
     private DatabaseReference mRef;
     private LinearLayoutManager linearLayoutManager;
+    private GridLayoutManager gridLayoutManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -127,7 +129,7 @@ public class MainActivity extends AppCompatActivity {
         mRecyclerView=findViewById(R.id.main_recyclerView);
         mRecyclerView.setHasFixedSize(true);
 
-        //gridLayoutManager=new GridLayoutManager(this,2);
+        gridLayoutManager=new GridLayoutManager(this,2);
         //gridLayoutManager.setReverseLayout(true);
         //gridLayoutManager.setStackFromEnd(true);
 
@@ -145,6 +147,29 @@ public class MainActivity extends AppCompatActivity {
             case R.id.nav_my_home:
                 drawerLayout.closeDrawer(Gravity.LEFT);
                 Toast.makeText(getApplicationContext(), "You are on HOME!", Toast.LENGTH_SHORT).show();
+                break;
+
+            case R.id.nav_logout:
+
+                AlertDialog.Builder builder=new AlertDialog.Builder(MainActivity.this);
+                builder.setTitle("Dou you really want to logout!");
+                builder.setPositiveButton("Logout", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        mGoogleSignInClient.signOut();
+                        mAuth.signOut();
+                        sentUserToLoginActivity();
+                    }
+                });
+                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+                AlertDialog alertDialog=builder.create();
+                alertDialog.show();
+
                 break;
         }
     }
@@ -280,26 +305,20 @@ public class MainActivity extends AppCompatActivity {
             return true;
         }
 
-        if (item.getItemId()==R.id.action_logout){
+        if (item.getItemId()==R.id.main_menu_layout){
+            Drawable drawable=item.getIcon();
 
-            AlertDialog.Builder builder=new AlertDialog.Builder(MainActivity.this);
-            builder.setTitle("Dou you really want to logout!");
-            builder.setPositiveButton("Logout", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    mGoogleSignInClient.signOut();
-                    mAuth.signOut();
-                    sentUserToLoginActivity();
-                }
-            });
-            builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    dialog.dismiss();
-                }
-            });
-            AlertDialog alertDialog=builder.create();
-            alertDialog.show();
+
+            if ( drawable.getConstantState().equals(getResources().getDrawable(R.drawable.ic_grid_on_black_24dp).getConstantState())){
+                mRecyclerView.setLayoutManager(gridLayoutManager);
+                item.setIcon(R.drawable.ic_linear_black_24dp);
+
+            }else if ( drawable.getConstantState().equals(getResources().getDrawable(R.drawable.ic_linear_black_24dp).getConstantState())){
+                mRecyclerView.setLayoutManager(linearLayoutManager);
+                item.setIcon(R.drawable.ic_grid_on_black_24dp);
+
+            }
+
         }
 
         return super.onOptionsItemSelected(item);

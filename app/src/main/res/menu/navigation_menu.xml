@@ -5,23 +5,23 @@
         <item
             android:id="@+id/nav_my_home"
             android:icon="@drawable/ic_format_list_bulleted_black_48dp"
-            android:title="Home" />
+            android:title="Book Library" />
         <item
-            android:id="@+id/nav_my_profile"
-            android:icon="@drawable/my_profile"
-            android:title="My Profile" />
-        <item
-            android:id="@+id/nav_imp_marked"
+            android:id="@+id/nav_selected_books"
             android:icon="@drawable/ic_star"
-            android:title="Important Marked" />
+            android:title="Selected Books" />
     </group>
 
 
     <group android:id="@+id/nav_bottom">
         <item
-            android:id="@+id/nav_about_us"
+            android:id="@+id/nav_about_developer"
             android:icon="@drawable/ic_about_us"
-            android:title="About Us" />
+            android:title="About Developer" />
+        <item
+            android:id="@+id/nav_logout"
+            android:icon="@drawable/logout_icon_24dp"
+            android:title="Logout" />
     </group>
 
 </menu>

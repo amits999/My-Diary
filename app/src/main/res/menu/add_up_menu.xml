@@ -8,8 +8,8 @@
         android:title="Delete"
         app:showAsAction="ifRoom"/>
     <item
-        android:id="@+id/up_add_background"
+        android:id="@+id/up_book_cover"
         android:icon="@drawable/ic_add_box_black_24dp"
-        android:title="Change Background"
+        android:title="Book Cover"
         app:showAsAction="ifRoom" />
 </menu>
