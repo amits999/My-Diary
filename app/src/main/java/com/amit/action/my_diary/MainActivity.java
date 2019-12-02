@@ -1,5 +1,6 @@
 package com.amit.action.my_diary;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -67,6 +68,7 @@ public class MainActivity extends AppCompatActivity {
     private DatabaseReference mRef;
     private LinearLayoutManager linearLayoutManager;
     private GridLayoutManager gridLayoutManager;
+    private ProgressDialog mProgress;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,6 +77,12 @@ public class MainActivity extends AppCompatActivity {
 
         mAuth=FirebaseAuth.getInstance();
         curUser=mAuth.getCurrentUser();
+        mProgress=new ProgressDialog(this);
+
+        mProgress.setTitle("Getting your Books!");
+        mProgress.setMessage("Please Wait ...");
+        mProgress.setCanceledOnTouchOutside(false);
+        mProgress.show();
 
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.default_web_client_id))
@@ -217,6 +225,8 @@ public class MainActivity extends AppCompatActivity {
                 .setQuery(mRef,Model.class)
                 .build();
 
+
+
         FirebaseRecyclerAdapter<Model, NotesViewHolder> firebaseRecyclerAdapter
                 =new FirebaseRecyclerAdapter<Model, NotesViewHolder>(options) {
 
@@ -241,6 +251,7 @@ public class MainActivity extends AppCompatActivity {
             @NonNull
             @Override
             public NotesViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+                mProgress.dismiss();
 
                 View view= LayoutInflater.from(parent.getContext()).inflate(R.layout.notes_layout,parent,false);
                 NotesViewHolder viewHolder=new NotesViewHolder(view);
@@ -250,6 +261,7 @@ public class MainActivity extends AppCompatActivity {
 
         mRecyclerView.setAdapter(firebaseRecyclerAdapter);
         firebaseRecyclerAdapter.startListening();
+
     }
 
     public static class NotesViewHolder extends RecyclerView.ViewHolder{
