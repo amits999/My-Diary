@@ -16,7 +16,9 @@
         android:roundIcon="@mipmap/diary"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".AboutUsActivity"></activity>
+        <activity android:name=".AboutUsActivity"
+            android:parentActivityName=".MainActivity"
+            ></activity>
         <activity
             android:name="com.theartofdev.edmodo.cropper.CropImageActivity"
             android:theme="@style/Base.Theme.AppCompat" />

@@ -179,6 +179,11 @@ public class MainActivity extends AppCompatActivity {
                 alertDialog.show();
 
                 break;
+
+            case R.id.nav_about_developer:
+                Intent intent=new Intent(MainActivity.this,AboutUsActivity.class);
+                startActivity(intent);
+                break;
         }
     }
 
