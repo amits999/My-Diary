@@ -12,18 +12,29 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
+import com.theartofdev.edmodo.cropper.CropImage;
+import com.theartofdev.edmodo.cropper.CropImageView;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -35,6 +46,8 @@ public class ProfileActivity extends AppCompatActivity {
     private Toolbar mToolbar;
     private CircleImageView profileImage;
     private TextView userName, userEmail, notesCount;
+    private ImageView profileEdit;
+    public static final int GalleryPick=1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,6 +69,7 @@ public class ProfileActivity extends AppCompatActivity {
         userName=findViewById(R.id.profile_name);
         userEmail=findViewById(R.id.profile_email);
         notesCount=findViewById(R.id.profile_notes_count);
+        profileEdit=findViewById(R.id.profile_image_edit);
 
         if (mUser.getPhotoUrl()!=null){
             Picasso.get().load(mUser.getPhotoUrl()).into(profileImage);
@@ -77,6 +91,21 @@ public class ProfileActivity extends AppCompatActivity {
 
             }
         });
+
+        profileEdit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                changeProfileImage();
+            }
+        });
+
+    }
+
+    private void changeProfileImage() {
+        Intent gallaryIntent=new Intent();
+        gallaryIntent.setAction(Intent.ACTION_GET_CONTENT);
+        gallaryIntent.setType("image/*");
+        startActivityForResult(gallaryIntent,GalleryPick);
 
     }
 
@@ -104,6 +133,59 @@ public class ProfileActivity extends AppCompatActivity {
             Intent intent=new Intent(ProfileActivity.this,LoginActivity.class);
             startActivity(intent);
             finish();
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode==GalleryPick && resultCode==RESULT_OK && data!=null){
+
+            Uri ImageUri=data.getData();
+
+            CropImage.activity()
+                    .setGuidelines(CropImageView.Guidelines.ON)
+                    .setAspectRatio(1,1)
+                    .start(this);
+
+        }
+
+        if (requestCode==CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE){
+
+            CropImage.ActivityResult result= CropImage.getActivityResult(data);
+
+            mProgress.setMessage("Updating Profile Image");
+            mProgress.setCanceledOnTouchOutside(false);
+            mProgress.show();
+
+
+            if (resultCode==RESULT_OK){
+
+                Uri resultUri=result.getUri();
+
+                UserProfileChangeRequest profileChangeRequest= new UserProfileChangeRequest.Builder().setPhotoUri(resultUri).build();
+                mUser.updateProfile(profileChangeRequest).addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()){
+                            mProgress.dismiss();
+                            Toast.makeText(ProfileActivity.this, "User Profile Updated", Toast.LENGTH_SHORT).show();
+                            if (mUser.getPhotoUrl()!=null){
+                                Picasso.get().load(mUser.getPhotoUrl()).into(profileImage);
+                            }
+                        }else{
+                            mProgress.dismiss();
+                            Toast.makeText(ProfileActivity.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+
+
+            }else{
+                mProgress.dismiss();
+                Toast.makeText(ProfileActivity.this, "Operation Cancelled by user!", Toast.LENGTH_SHORT).show();
+            }
         }
     }
 

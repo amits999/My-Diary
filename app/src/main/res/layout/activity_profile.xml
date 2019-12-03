@@ -70,4 +70,12 @@
         app:layout_constraintStart_toStartOf="@+id/textView8"
         app:layout_constraintTop_toBottomOf="@+id/textView8" />
 
+    <ImageView
+        android:id="@+id/profile_image_edit"
+        android:layout_width="29dp"
+        android:layout_height="29dp"
+        app:layout_constraintBottom_toBottomOf="@+id/profile_image"
+        app:layout_constraintEnd_toEndOf="@+id/profile_image"
+        app:srcCompat="@drawable/ic_mode_edit_black_24dp" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
