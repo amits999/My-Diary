@@ -251,6 +251,15 @@ public class MainActivity extends AppCompatActivity {
                         startActivity(intent);
                     }
                 });
+
+                holder.mView.setOnLongClickListener(new View.OnLongClickListener() {
+                    @Override
+                    public boolean onLongClick(View v) {
+                        Intent intent=new Intent(MainActivity.this,ReaderActivity.class);
+                        startActivity(intent);
+                        return false;
+                    }
+                });
             }
 
             @NonNull
