@@ -184,6 +184,11 @@ public class MainActivity extends AppCompatActivity {
                 Intent intent=new Intent(MainActivity.this,AboutUsActivity.class);
                 startActivity(intent);
                 break;
+
+            case R.id.nav_selected_books:
+                Intent selectIntent=new Intent(MainActivity.this,SelectedBooks.class);
+                startActivity(selectIntent);
+                break;
         }
     }
 

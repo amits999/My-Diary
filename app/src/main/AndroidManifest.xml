@@ -16,7 +16,9 @@
         android:roundIcon="@mipmap/diary"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".SelectedBooks"></activity>
+        <activity android:name=".SelectedBooks"
+            android:parentActivityName=".MainActivity">
+        </activity>
         <activity android:name=".ReaderActivity" />
         <activity
             android:name=".AboutUsActivity"
