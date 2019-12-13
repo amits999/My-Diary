@@ -41,12 +41,13 @@ public class AddNotesActivity extends AppCompatActivity {
     private EditText titleField,notesField;
     private ProgressDialog mProgress;
     private FloatingActionButton fab;
-    private DatabaseReference mRef;
+    private DatabaseReference mRef,impRef;
     private FirebaseUser mUser;
     private FirebaseAuth mAuth;
     //private boolean textChanged=false;
     private String tit=null,not=null;
     private String saveCurrentDate=null,saveCurrentTime=null,time=null,key=null;
+    private  boolean isImp=false;
 
 
 
@@ -67,6 +68,7 @@ public class AddNotesActivity extends AppCompatActivity {
         bottomAppBar.setTitle("Edited: 9 Nov");
 
         Intent intent =getIntent();
+        impRef=FirebaseDatabase.getInstance().getReference().child("important_notes");
 
         setSupportActionBar(mToolbar);
         getSupportActionBar().setTitle("New Note");
@@ -307,12 +309,14 @@ public class AddNotesActivity extends AppCompatActivity {
 
             if ( drawable.getConstantState().equals(getResources().getDrawable(R.drawable.ic_star_border_black_24dp).getConstantState())){
 
+                isImp=true;
                 item.setIcon(R.drawable.ic_star_black_24dp);
                 Toast.makeText(AddNotesActivity.this, "Note is marked as important.", Toast.LENGTH_SHORT).show();
                 item.setTitle("Mark Important");
 
             }else if ( drawable.getConstantState().equals(getResources().getDrawable(R.drawable.ic_star_black_24dp).getConstantState())){
 
+                isImp=false;
                 item.setIcon(R.drawable.ic_star_border_black_24dp);
                 Toast.makeText(AddNotesActivity.this, "Note is unmarked from important.", Toast.LENGTH_SHORT).show();
                 item.setTitle("Remove from Imp.");
