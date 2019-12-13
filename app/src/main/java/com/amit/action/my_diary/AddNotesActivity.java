@@ -13,6 +13,7 @@ import androidx.appcompat.widget.Toolbar;
 
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -68,7 +69,6 @@ public class AddNotesActivity extends AppCompatActivity {
         bottomAppBar.setTitle("Edited: 9 Nov");
 
         Intent intent =getIntent();
-        impRef=FirebaseDatabase.getInstance().getReference().child("important_notes");
 
         setSupportActionBar(mToolbar);
         getSupportActionBar().setTitle("New Note");
@@ -110,6 +110,7 @@ public class AddNotesActivity extends AppCompatActivity {
 
 
         mRef= FirebaseDatabase.getInstance().getReference().child("notes");
+        impRef=FirebaseDatabase.getInstance().getReference().child("notes").child(mUser.getUid()).child("important_notes");
 
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -310,6 +311,18 @@ public class AddNotesActivity extends AppCompatActivity {
             if ( drawable.getConstantState().equals(getResources().getDrawable(R.drawable.ic_star_border_black_24dp).getConstantState())){
 
                 isImp=true;
+                if (key!=null){
+                    impRef.child(key).setValue("yes").addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if (task.isSuccessful()){
+                                Log.i("Imp mark check","work done");
+                            }else{
+                                Toast.makeText(AddNotesActivity.this, "Error Saving Changes! "+task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
+                }
                 item.setIcon(R.drawable.ic_star_black_24dp);
                 Toast.makeText(AddNotesActivity.this, "Note is marked as important.", Toast.LENGTH_SHORT).show();
                 item.setTitle("Mark Important");
@@ -317,6 +330,19 @@ public class AddNotesActivity extends AppCompatActivity {
             }else if ( drawable.getConstantState().equals(getResources().getDrawable(R.drawable.ic_star_black_24dp).getConstantState())){
 
                 isImp=false;
+                if (key!=null){
+                    impRef.child(key).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if (task.isSuccessful()){
+                                Log.i("Imp unmark check","work done");
+                            }else{
+                                Toast.makeText(AddNotesActivity.this, "Error Saving Changes! "+task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
+                }
+
                 item.setIcon(R.drawable.ic_star_border_black_24dp);
                 Toast.makeText(AddNotesActivity.this, "Note is unmarked from important.", Toast.LENGTH_SHORT).show();
                 item.setTitle("Remove from Imp.");
