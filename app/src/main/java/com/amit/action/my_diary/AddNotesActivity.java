@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import androidx.appcompat.widget.Toolbar;
 
@@ -299,6 +300,24 @@ public class AddNotesActivity extends AppCompatActivity {
             });
             AlertDialog alertDialog=builder.create();
             alertDialog.show();
+        }
+
+        if (item.getItemId()==R.id.up_star){
+            Drawable drawable=item.getIcon();
+
+            if ( drawable.getConstantState().equals(getResources().getDrawable(R.drawable.ic_star_border_black_24dp).getConstantState())){
+
+                item.setIcon(R.drawable.ic_star_black_24dp);
+                Toast.makeText(AddNotesActivity.this, "Note is marked as important.", Toast.LENGTH_SHORT).show();
+                item.setTitle("Mark Important");
+
+            }else if ( drawable.getConstantState().equals(getResources().getDrawable(R.drawable.ic_star_black_24dp).getConstantState())){
+
+                item.setIcon(R.drawable.ic_star_border_black_24dp);
+                Toast.makeText(AddNotesActivity.this, "Note is unmarked from important.", Toast.LENGTH_SHORT).show();
+                item.setTitle("Remove from Imp.");
+
+            }
         }
 
         return super.onOptionsItemSelected(item);
