@@ -259,6 +259,19 @@ public class AddNotesActivity extends AppCompatActivity {
                     }
                 }
             });
+            Log.i("Imp value", isImp+"");
+            if (isImp){
+                impRef.child(time).setValue("yes").addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()){
+                            Log.i("Imp mark check","work done");
+                        }else{
+                            Toast.makeText(AddNotesActivity.this, "Error Saving Changes! "+task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+            }
         }
 
 
@@ -306,6 +319,7 @@ public class AddNotesActivity extends AppCompatActivity {
                 public void onClick(DialogInterface dialog, int which) {
                     if (key!=null){
                         mRef.child(mUser.getUid()).child(key).removeValue();
+                        impRef.child(key).removeValue();
                         onBackPressed();
                     }else{
                         onBackPressed();
