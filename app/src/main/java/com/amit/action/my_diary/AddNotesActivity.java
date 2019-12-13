@@ -87,6 +87,7 @@ public class AddNotesActivity extends AppCompatActivity {
             key=intent.getStringExtra("postKey");
             System.out.println(key);
             mRef= FirebaseDatabase.getInstance().getReference().child("notes").child(mUser.getUid()).child(key);
+
             mRef.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -110,7 +111,7 @@ public class AddNotesActivity extends AppCompatActivity {
 
 
         mRef= FirebaseDatabase.getInstance().getReference().child("notes");
-        impRef=FirebaseDatabase.getInstance().getReference().child("notes").child(mUser.getUid()).child("important_notes");
+        impRef=FirebaseDatabase.getInstance().getReference().child("star_marked").child(mUser.getUid()).child("important_notes");
 
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -270,9 +271,25 @@ public class AddNotesActivity extends AppCompatActivity {
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-
+    public boolean onCreateOptionsMenu(final Menu menu) {
         getMenuInflater().inflate(R.menu.add_up_menu,menu);
+
+        if (key!=null){
+            impRef.child(key).addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    if (dataSnapshot.exists()){
+                        menu.findItem(R.id.up_star).setIcon(R.drawable.ic_star_black_24dp);
+
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
+        }
 
         return super.onCreateOptionsMenu(menu);
     }
